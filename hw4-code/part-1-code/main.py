@@ -45,7 +45,41 @@ def do_train(args, model, train_dataloader, save_dir="./out"):
     # You can use progress_bar.update(1) to see the progress during training
     # You can refer to the pytorch tutorial covered in class for reference
 
-    raise NotImplementedError
+    global device
+
+    step = 0
+    for epoch in range(num_epochs):
+        model.train()
+        epoch_loss = 0.0
+        for batch in train_dataloader:
+            # move batch to device
+            batch = {k: v.to(device) for k, v in batch.items()}
+
+            outputs = model(**batch)
+
+            # transformers' SeqClassification models return loss when labels are provided
+            loss = outputs.loss if hasattr(outputs, "loss") else outputs[0]
+
+            # backprop
+            loss.backward()
+
+            # gradient clipping
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+
+            optimizer.step()
+            lr_scheduler.step()
+            optimizer.zero_grad()
+
+            step += 1
+            epoch_loss += loss.item()
+            progress_bar.update(1)
+
+            if step % 100 == 0:
+                avg_so_far = epoch_loss / step if step > 0 else 0.0
+                progress_bar.set_description(f"Epoch {epoch+1}/{num_epochs} loss: {loss.item():.4f} avg: {avg_so_far:.4f}")
+
+        avg_epoch_loss = epoch_loss / (len(train_dataloader) if len(train_dataloader) > 0 else 1)
+        print(f"Finished epoch {epoch+1}/{num_epochs} - avg loss: {avg_epoch_loss:.4f}")
 
     ##### YOUR CODE ENDS HERE ######
 
