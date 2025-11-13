@@ -1,0 +1,7 @@
+# outputs / checkpoints / caches
+hw4-code/part-1-code/out/
+__pycache__/
+*.safetensors
+*.pt
+*.bin
+*.ckpt

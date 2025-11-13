@@ -45,41 +45,30 @@ def do_train(args, model, train_dataloader, save_dir="./out"):
     # You can use progress_bar.update(1) to see the progress during training
     # You can refer to the pytorch tutorial covered in class for reference
 
-    global device
+    # Followed the zero_grad recipe above and 
+    # HuggingFace tutorial: https://huggingface.co/learn/llm-course/en/chapter3/4
 
-    step = 0
     for epoch in range(num_epochs):
-        model.train()
         epoch_loss = 0.0
         for batch in train_dataloader:
-            # move batch to device
             batch = {k: v.to(device) for k, v in batch.items()}
 
+            # forward pass
+            optimizer.zero_grad()
             outputs = model(**batch)
 
-            # transformers' SeqClassification models return loss when labels are provided
-            loss = outputs.loss if hasattr(outputs, "loss") else outputs[0]
-
-            # backprop
+            # backward pass
+            loss = outputs.loss
             loss.backward()
-
-            # gradient clipping
-            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
-
             optimizer.step()
             lr_scheduler.step()
-            optimizer.zero_grad()
 
-            step += 1
             epoch_loss += loss.item()
             progress_bar.update(1)
 
-            if step % 100 == 0:
-                avg_so_far = epoch_loss / step if step > 0 else 0.0
-                progress_bar.set_description(f"Epoch {epoch+1}/{num_epochs} loss: {loss.item():.4f} avg: {avg_so_far:.4f}")
-
-        avg_epoch_loss = epoch_loss / (len(train_dataloader) if len(train_dataloader) > 0 else 1)
-        print(f"Finished epoch {epoch+1}/{num_epochs} - avg loss: {avg_epoch_loss:.4f}")
+        # Print average loss for the epoch
+        avg_loss = epoch_loss / len(train_dataloader)
+        print(f"Epoch [{epoch + 1}/{num_epochs}] average loss: {avg_loss:.4f}")
 
     ##### YOUR CODE ENDS HERE ######
 

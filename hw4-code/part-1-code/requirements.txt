@@ -1,6 +1,38 @@
-transformers==4.26.1
-datasets==2.9.0
-torch==1.13.1
+###############################################################################
+# Original pinned versions (for Python 3.9 environments like local conda)
+# transformers==4.26.1
+# datasets==2.9.0
+# torch==1.13.1
+# evaluate==0.4.0
+# scikit-learn==1.2.1
+# nltk==3.8.1
+###############################################################################
+
+# ---------------------------------------------------------------------------
+# Updated pins for Python 3.12 + CUDA 12.1 GPU runtime (Lightning AI default)
+# ---------------------------------------------------------------------------
+
+# Allow PyTorch GPU installs directly from the CUDA 12.1 wheel index
+--extra-index-url https://download.pytorch.org/whl/cu121
+
+# PyTorch stack (GPU enabled, works with Py3.12)
+torch==2.3.*
+torchvision==0.18.*
+torchaudio==2.3.*
+
+# Updated Transformers — compatible with tokenizers wheels on Py3.12
+transformers==4.41.*
+tokenizers>=0.15.2,<0.21
+
+# Datasets + Evaluate (same as before; 2.9.0 still fine)
+datasets==2.19.*
 evaluate==0.4.0
-scikit-learn==1.2.1
+
+# scikit-learn bumped for NumPy 2.x / Py3.12 binary compatibility
+scikit-learn==1.5.*
+
+# Force NumPy 1.26 to avoid copy-flag errors in datasets → torch formatting
+numpy==1.26.4
+
+# NLTK (no change)
 nltk==3.8.1
