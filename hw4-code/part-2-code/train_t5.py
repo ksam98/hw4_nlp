@@ -5,7 +5,7 @@ from tqdm import tqdm
 import torch
 import torch.nn as nn
 import numpy as np
-import wandb
+#import wandb
 
 from t5_utils import initialize_model, initialize_optimizer_and_scheduler, save_model, load_model_from_checkpoint, setup_wandb
 from transformers import GenerationConfig, T5TokenizerFast
