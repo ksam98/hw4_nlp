@@ -33,6 +33,11 @@ detok = TreebankWordDetokenizer()
 
 random.seed(0)
 
+# QWERTY keyboard neighbors for simulating typos
+# NOTE: this was generated with the help of LLMs (ChatGPT 5.1) with the following
+# prompt: "For a QWERTY keyboard, provide a dictionary where each key is a letter, number,
+# punctuation or symbol, and the value is a list of nearby keys on the keyboard that could
+# be used to simulate a typo. Provide the dictionary as valid Python code."
 QWERTY_NEIGHBORS = {
     # letters
     'a': list("qwsz"), 'b': list("vghn"), 'c': list("xdfv"),
@@ -91,7 +96,12 @@ def custom_transform(example):
     text = example["text"]
     tokens = word_tokenize(text)
 
-    # Find token with highest absolute sentiment score (ie VADER intensity
+    # NOTE: I used the following prompt with ChatGPT 5.1 "I am working on machine learning 
+    # problem to classify different review to sentiment. To aid data augmentation and processing,
+    # give me strategies to identify sentiment words in a sentence. Ideally use python's NLTK, 
+    # pytorch, hugging face libraries etc to do so." to learn about VADER and how to use it.
+
+    # Find token with highest absolute sentiment score (ie VADER intensity)
     token_idx = None
     max_abs_vader_score = 0.0
     for i, token in enumerate(tokens): 

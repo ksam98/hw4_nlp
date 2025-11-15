@@ -47,7 +47,6 @@ def do_train(args, model, train_dataloader, save_dir="./out"):
 
     # Followed the zero_grad recipe above and 
     # HuggingFace tutorial: https://huggingface.co/learn/llm-course/en/chapter3/4
-
     for epoch in range(num_epochs):
         epoch_loss = 0.0
         for batch in train_dataloader:
