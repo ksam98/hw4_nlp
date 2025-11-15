@@ -94,6 +94,8 @@ def normal_collate_fn(batch):
     encoder_ids_list = [item['encoder_input_ids'] for item in batch]
     decoder_ids_list = [item['decoder_target_ids'] for item in batch]
 
+    # NOTE: The following lines were primarily suggestions from GitHub Copilot
+    # (via ChatGPT) with minor edits from me.
     encoder_ids = pad_sequence(
         encoder_ids_list, batch_first=True, padding_value=PAD_IDX
     ) 
