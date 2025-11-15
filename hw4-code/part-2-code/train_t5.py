@@ -59,7 +59,7 @@ def train(args, model, train_loader, dev_loader, optimizer, scheduler):
     checkpoint_dir = os.path.join('checkpoints', f'{model_type}_experiments', args.experiment_name)
     os.makedirs(checkpoint_dir, exist_ok=True)
     args.checkpoint_dir = checkpoint_dir
-    experiment_name = 'ft_experiment'
+    experiment_name = args.experiment_name
     gt_sql_path = os.path.join(f'data/dev.sql')
     gt_record_path = os.path.join(f'records/ground_truth_dev.pkl')
     model_sql_path = os.path.join(f'results/t5_{model_type}_{experiment_name}_dev.sql')
@@ -199,7 +199,7 @@ def test_inference(args, model, test_loader, model_sql_path, model_record_path):
     tokenizer = T5TokenizerFast.from_pretrained('google-t5/t5-small')
     predictions = []
     with torch.no_grad():
-        for encoder_input, encoder_mask, _, _, _ in tqdm(test_loader):
+        for encoder_input, encoder_mask, _ in tqdm(test_loader):
             encoder_input = encoder_input.to(DEVICE)
             encoder_mask = encoder_mask.to(DEVICE)
 
@@ -236,7 +236,7 @@ def main():
     model.eval()
     
     # Dev set
-    experiment_name = 'ft_experiment'
+    experiment_name = args.experiment_name
     model_type = 'ft' if args.finetune else 'scr'
     gt_sql_path = os.path.join(f'data/dev.sql')
     gt_record_path = os.path.join(f'records/ground_truth_dev.pkl')
