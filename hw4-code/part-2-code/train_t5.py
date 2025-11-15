@@ -244,7 +244,7 @@ def main():
     gt_record_path = os.path.join(f'records/ground_truth_dev.pkl')
     model_sql_path = os.path.join(f'results/t5_{model_type}_{experiment_name}_dev.sql')
     model_record_path = os.path.join(f'records/t5_{model_type}_{experiment_name}_dev.pkl')
-    dev_loss, dev_record_em, dev_record_f1, dev_sql_em, dev_error_rate = eval_epoch(args, model, dev_loader,
+    dev_loss, dev_record_f1, dev_record_em, dev_sql_em, dev_error_rate = eval_epoch(args, model, dev_loader,
                                                                                     gt_sql_path, model_sql_path,
                                                                                     gt_record_path, model_record_path)
     print(f"Dev set results: Loss: {dev_loss}, Record F1: {dev_record_f1}, Record EM: {dev_record_em}, SQL EM: {dev_sql_em}")
