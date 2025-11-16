@@ -38,7 +38,8 @@ def get_args():
                         help="How many epochs to train the model for")
     parser.add_argument('--patience_epochs', type=int, default=0,
                         help="If validation performance stops improving, how many epochs should we wait before stopping?")
-
+    parser.add_argument('--eval_every_epochs', type=int, default=1,
+                        help="How often (in epochs) to run full dev evaluation. 1 = every epoch.")
     parser.add_argument('--use_wandb', action='store_true',
                         help="If set, we will use wandb to keep track of experiments")
     parser.add_argument('--experiment_name', type=str, default='experiment',
@@ -64,9 +65,21 @@ def train(args, model, train_loader, dev_loader, optimizer, scheduler):
     gt_record_path = os.path.join(f'records/ground_truth_dev.pkl')
     model_sql_path = os.path.join(f'results/t5_{model_type}_{experiment_name}_dev.sql')
     model_record_path = os.path.join(f'records/t5_{model_type}_{experiment_name}_dev.pkl')
+
+    eval_every = max(1, args.eval_every_epochs)
+
     for epoch in range(args.max_n_epochs):
         tr_loss = train_epoch(args, model, train_loader, optimizer, scheduler)
         print(f"Epoch {epoch}: Average train loss was {tr_loss}")
+
+        # Decide whether to run dev eval this epoch
+        run_eval = ((epoch + 1) % eval_every == 0) or (epoch == 0)
+
+        if not run_eval:
+            print(f"Epoch {epoch}: Skipping dev evaluation (eval_every_epochs={eval_every})")
+            # still save last-model checkpoint
+            save_model(checkpoint_dir, model, best=False)
+            continue
 
         eval_loss, record_f1, record_em, sql_em, error_rate = eval_epoch(args, model, dev_loader,
                                                                          gt_sql_path, model_sql_path,
